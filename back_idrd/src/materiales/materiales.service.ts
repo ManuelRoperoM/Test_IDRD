@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { Materiales } from './entities/materiales.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MaterialById } from './dtos/responsesDtos/MaterialById';
+import { AllMaterialsDTO } from './dtos/responsesDtos/AllMaterialsDto';
+import { UpdateMaterialDto } from './dtos/requestsDtos/UpdateMaterialDto';
+import { ResUpdateMaterialDto } from './dtos/responsesDtos/ResUpdateMaterialDto';
 
 @Injectable()
 export class MaterialesService {
@@ -45,6 +48,49 @@ export class MaterialesService {
         };
       }
       return { status: 200, data: material };
+    } catch (error) {
+      return {
+        status: 500,
+        msge: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  async getAllMaterials(): Promise<AllMaterialsDTO> {
+    try {
+      const allMataterials = await this.materialRepository.find();
+      return {
+        status: 200,
+        data: allMataterials,
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        msge: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  async updateMaterialData(
+    id: number,
+    updateData: UpdateMaterialDto,
+  ): Promise<ResUpdateMaterialDto> {
+    try {
+      const material = await this.materialRepository.findOneBy({ id });
+
+      if (!material) {
+        return {
+          status: 500,
+          msge: `No se encontro material por ID : ${id}`,
+        };
+      }
+      Object.assign(material, updateData);
+
+      await this.materialRepository.save(material);
+      return {
+        status: 200,
+        msge: `Material: ${material.description}, actualizado exitosamente`,
+      };
     } catch (error) {
       return {
         status: 500,

@@ -6,8 +6,8 @@ export class RegisterMaterialDto {
   description: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  unidad: number;
+  @IsString()
+  unidad: string;
 
   @IsNotEmpty()
   @IsNumber()

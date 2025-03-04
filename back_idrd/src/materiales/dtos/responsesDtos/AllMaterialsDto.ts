@@ -1,14 +1,14 @@
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Materiales } from 'src/materiales/entities/materiales.entity';
 
-export class MaterialById {
-  @IsNotEmpty()
+export class AllMaterialsDTO {
   @IsNumber()
   status: number;
 
   @IsOptional()
-  data?: Materiales;
+  data?: Materiales[];
 
+  @IsString()
   @IsOptional()
   msge?: string;
 }

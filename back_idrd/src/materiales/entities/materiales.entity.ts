@@ -9,8 +9,8 @@ export class Materiales {
   @Column()
   description: string;
 
-  @Column({ type: 'decimal', nullable: false })
-  unidad: number;
+  @Column({ nullable: false, default: 'UND' })
+  unidad: string;
 
   @Column()
   precio: number;
