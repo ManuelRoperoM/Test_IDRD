@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -41,5 +42,11 @@ export class MaterialesController {
     @Body() updateData: UpdateMaterialDto,
   ): Promise<ResUpdateMaterialDto> {
     return await this.materialService.updateMaterialData(id, updateData);
+  }
+  @Delete(':id')
+  async deleteMaterial(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResUpdateMaterialDto> {
+    return await this.materialService.deleteMaterial(id);
   }
 }

@@ -98,4 +98,26 @@ export class MaterialesService {
       };
     }
   }
+
+  async deleteMaterial(id: number): Promise<ResUpdateMaterialDto> {
+    try {
+      const material = await this.materialRepository.delete(id);
+
+      if (material.affected === 0) {
+        return {
+          status: 404,
+          msge: `No se encontró material con id ${id}`,
+        };
+      }
+      return {
+        status: 200,
+        msge: `Material con id ${id} eliminado correctamente`,
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        msge: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
 }
