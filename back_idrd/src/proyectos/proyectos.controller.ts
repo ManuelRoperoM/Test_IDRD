@@ -15,6 +15,8 @@ import { ProyectById } from './dtos/responsesDtos/ProyectById';
 import { ALlProyectsDto } from './dtos/responsesDtos/AllProyectsDto';
 import { UpdateProyectDto } from './dtos/requestDtos/UpdateProyectDto';
 import { ResUpdateProyectDto } from './dtos/responsesDtos/ResUpdateProyectDto';
+import { AddMaterialDto } from './dtos/responsesDtos/AddMaterialDto';
+import { MaterialAddDto } from './dtos/requestDtos/MaterialAddDto';
 
 @Controller('proyectos')
 export class ProyectosController {
@@ -30,12 +32,12 @@ export class ProyectosController {
   async getProyectById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<ProyectById> {
-    return this.proyectoService.getProyectById(id);
+    return await this.proyectoService.getProyectById(id);
   }
 
   @Get()
   async getAllProyects(): Promise<ALlProyectsDto> {
-    return this.proyectoService.getAllProyect();
+    return await this.proyectoService.getAllProyect();
   }
 
   @Put(':id')
@@ -43,13 +45,21 @@ export class ProyectosController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateData: UpdateProyectDto,
   ): Promise<ResUpdateProyectDto> {
-    return this.proyectoService.updateProyectData(id, updateData);
+    return await this.proyectoService.updateProyectData(id, updateData);
   }
 
   @Delete(':id')
   async deleteProyect(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<ResUpdateProyectDto> {
-    return this.proyectoService.deleteProyect(id);
+    return await this.proyectoService.deleteProyect(id);
+  }
+
+  @Post('/:id/materiales')
+  async addProductInProject(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() materialsIds: MaterialAddDto,
+  ): Promise<AddMaterialDto> {
+    return await this.proyectoService.addMaterialsToProject(id, materialsIds);
   }
 }
