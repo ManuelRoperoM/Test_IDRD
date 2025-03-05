@@ -1,25 +1,13 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container>
-        <v-btn color="primary" @click="handleClick">
-          ¡Hola Vuetify!
-        </v-btn>
-        <v-alert type="success" class="mt-4">
-          Vuetify está funcionando correctamente 🎯
-        </v-alert>
-      </v-container>
-    </v-main>
-  </v-app>
+  <Layout>
+    <router-view />
+  </Layout>
 </template>
 
 <script setup>
 import { VApp, VMain, VContainer } from 'vuetify/components'
+import Layout from '@/components/Layout.vue'
 function handleClick() {
   console.log('¡Botón de Vuetify funcionando!')
 }
 </script>
-
-<style scoped>
-
-</style>
