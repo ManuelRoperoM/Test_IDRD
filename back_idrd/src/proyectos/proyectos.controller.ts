@@ -17,6 +17,7 @@ import { UpdateProyectDto } from './dtos/requestDtos/UpdateProyectDto';
 import { ResUpdateProyectDto } from './dtos/responsesDtos/ResUpdateProyectDto';
 import { AddMaterialDto } from './dtos/responsesDtos/AddMaterialDto';
 import { MaterialAddDto } from './dtos/requestDtos/MaterialAddDto';
+import { Departamento } from './entities/departamento.entities';
 
 @Controller('proyectos')
 export class ProyectosController {
@@ -26,6 +27,15 @@ export class ProyectosController {
     @Body() data: RegisterProyectDto,
   ): Promise<ProyectCreteDto> {
     return await this.proyectoService.registerProyect(data);
+  }
+
+  @Get('departamentos')
+  async getAllDepartametntos(): Promise<{
+    status: number;
+    data?: Departamento[];
+    msge?: string;
+  }> {
+    return await this.proyectoService.getAllDepartamentos();
   }
 
   @Get(':id')

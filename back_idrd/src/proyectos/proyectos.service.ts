@@ -12,6 +12,7 @@ import { ResUpdateProyectDto } from './dtos/responsesDtos/ResUpdateProyectDto';
 import { AddMaterialDto } from './dtos/responsesDtos/AddMaterialDto';
 import { Materiales } from 'src/materiales/entities/materiales.entity';
 import { MaterialAddDto } from './dtos/requestDtos/MaterialAddDto';
+import { Departamento } from './entities/departamento.entities';
 
 @Injectable()
 export class ProyectosService {
@@ -22,6 +23,8 @@ export class ProyectosService {
     private ciudadRepsitory: Repository<Ciudades>,
     @InjectRepository(Materiales)
     private materialRepository: Repository<Materiales>,
+    @InjectRepository(Departamento)
+    private departamentoRepository: Repository<Departamento>,
   ) {}
 
   async registerProyect(data: RegisterProyectDto): Promise<ProyectCreteDto> {
@@ -186,6 +189,26 @@ export class ProyectosService {
       return {
         status: 200,
         msge: `Materiales agregados al ${proyecto.nombre} exitosamente`,
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        msge: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+  async getAllDepartamentos(): Promise<{
+    status: number;
+    data?: Departamento[];
+    msge?: string;
+  }> {
+    try {
+      const departamentos = await this.departamentoRepository.find({
+        relations: ['ciudad'],
+      });
+      return {
+        status: 200,
+        data: departamentos,
       };
     } catch (error) {
       return {

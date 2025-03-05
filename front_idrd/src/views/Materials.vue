@@ -76,7 +76,7 @@ const BACKEND_ENDPOINT = 'http://localhost:3000/'
 
 async function fetchMaterials() {
     try {
-        const response = await fetch('http://localhost:3000/materiales')
+        const response = await fetch(BACKEND_ENDPOINT+'materiales')
         if(!response.ok) throw new Error('Error al obtener los materiales')
         const { data } = await response.json()
         materials.value = Array.isArray(data) ? data : []
@@ -97,7 +97,6 @@ async function editarMaterial(material) {
 
 async function verDetalle(id) {
     loadingView.value = { ...loadingView.value, [id]: true }
-  // Simula una operación asíncrona
   setTimeout(() => {
     console.log('Material eliminado con ID:', id)
     loadingView.value = { ...loadingView.value, [id]: false }
@@ -105,12 +104,20 @@ async function verDetalle(id) {
 }
 
 async function eliminarMaterial(id) {
+    const confirmar = window.confirm('¿Estás seguro de que deseas eliminar este material?')
+    if (!confirmar) return
     loadingDelete.value = { ...loadingDelete.value, [id]: true }
-  // Simula una operación asíncrona
-  setTimeout(() => {
-    console.log('Material eliminado con ID:', id)
-    loadingDelete.value = { ...loadingDelete.value, [id]: false }
-  }, 1000)
+    try {
+        const response = await fetch(BACKEND_ENDPOINT+`materiales/${id}`, {
+            method: 'DELETE',
+        })
+        if (!response.ok) throw new Error('Error al eliminar el material')
+        await fetchMaterials()
+    } catch (error) {
+        console.error('Error al eliminar el material:', error.message)
+    } finally {
+        loadingDelete.value = { ...loadingDelete.value, [id]: false }
+    }
 }
 
 async function handleSaveMaterial(material) {
