@@ -26,6 +26,8 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+  align-items: center;
+  justify-content: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -68,6 +70,14 @@ button:focus-visible {
 #app, v-app {
   height: 100vh;
   margin: 0;
+}
+
+.v-main {
+  width: 100vw; /* Toma el 100% del ancho de la ventana */
+  max-width: 100%;
+  padding: 0;
+  margin: 0 auto;
+  box-sizing: border-box; /* Incluye el padding dentro del ancho */
 }
 
 @media (prefers-color-scheme: light) {
