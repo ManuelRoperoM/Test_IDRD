@@ -11,6 +11,12 @@
       @close="showModal = false"
       @save="handleSaveMaterial"
      />
+     <UpdateMaterialForm 
+     :showModal="showUpdateModal"
+     :material="materialToEdit"
+     @close="closeUpdateModal(materialToEdit)"
+     @update="handleUpdateMaterial"
+     />
         <v-row class="gap-5">
             <v-col
               v-for="material in materials"
@@ -39,7 +45,7 @@
                 <v-btn :loading="loadingView[material.id] || false" color="primary" @click="verDetalle(material.id)" icon>
                     <v-icon>mdi-file-eye-outline</v-icon>
                 </v-btn>
-                <v-btn :loading="loadingUpdate[material.id] || false" color="warning" @click="editarMaterial(material.id)" icon>
+                <v-btn :loading="loadingUpdate[material.id] || false" color="warning" @click="editarMaterial(material)" icon>
                     <v-icon>mdi-tag-edit-outline</v-icon>
                 </v-btn>
                 <v-btn :loading="loadingDelete[material.id] || false" color="error" @click="eliminarMaterial(material.id)" icon>
@@ -56,13 +62,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import AddMaterialForm from '@/components/AddMaterialForm.vue'
-
+import UpdateMaterialForm from '@/components/UpdateMaterialForm.vue'
 const materials = ref([])
 const loadingDelete = ref({})
 const loadingUpdate = ref({})
 const loadingView = ref({})
 
 const showModal = ref(false)
+const showUpdateModal = ref(false)
+const materialToEdit = ref(null)
+
+const BACKEND_ENDPOINT = 'http://localhost:3000/'
 
 async function fetchMaterials() {
     try {
@@ -77,13 +87,12 @@ async function fetchMaterials() {
 }
 onMounted(fetchMaterials)
 
-async function eliminarMaterial(id) {
-    loadingDelete.value = { ...loadingDelete.value, [id]: true }
-  // Simula una operación asíncrona
-  setTimeout(() => {
-    console.log('Material eliminado con ID:', id)
-    loadingDelete.value = { ...loadingDelete.value, [id]: false }
-  }, 1000)
+async function editarMaterial(material) {
+    materialToEdit.value = material
+    loadingUpdate.value = { ...loadingUpdate.value, [material.id]: true }
+    showUpdateModal.value = true
+    console.log(material,showUpdateModal.value );
+    
 }
 
 async function verDetalle(id) {
@@ -95,32 +104,61 @@ async function verDetalle(id) {
   }, 1000)
 }
 
-async function editarMaterial(id) {
-    loadingUpdate.value = { ...loadingUpdate.value, [id]: true }
+async function eliminarMaterial(id) {
+    loadingDelete.value = { ...loadingDelete.value, [id]: true }
   // Simula una operación asíncrona
   setTimeout(() => {
     console.log('Material eliminado con ID:', id)
-    loadingUpdate.value = { ...loadingUpdate.value, [id]: false }
+    loadingDelete.value = { ...loadingDelete.value, [id]: false }
   }, 1000)
 }
 
-async function handleSaveMaterial(newMaterial) {
+async function handleSaveMaterial(material) {
   try {
-      const response = await fetch('http://localhost:3000/materiales/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newMaterial)
-    })
-    if (!response.ok) throw new Error('Error al guardar el material')
-    const savedMaterial = await response.json()
+    const response = await fetch(BACKEND_ENDPOINT+'materiales/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(material)
+  })
+  if (!response.ok) throw new Error('Error al guardar el material')
+  const savedMaterial = await response.json()
     await fetchMaterials()
   } catch (error) {
-    
+    console.error(error.message)
   } finally {
     showModal.value = false
   }
+}
+
+function closeUpdateModal(material) {
+    showUpdateModal.value = false
+    // @close="showUpdateModal = false"
+    loadingUpdate.value = { ...loadingUpdate.value, [material.id]: false }
+}
+
+async function handleUpdateMaterial(material) {
+    try {
+        console.log(material);
+
+        const response = await fetch(BACKEND_ENDPOINT+`materiales/${material.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(material)
+        })
+        
+        if (!response.ok) throw new Error('Error al guardar el material')
+        const updateMaterial = await response.json()
+        await fetchMaterials()
+    } catch (error) {
+        console.error(error.message)
+    } finally {
+        showUpdateModal.value = false
+        loadingUpdate.value = { ...loadingUpdate.value, [material.id]: false }
+    }
 }
 </script>
 
