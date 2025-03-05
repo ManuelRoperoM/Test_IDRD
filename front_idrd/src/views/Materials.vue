@@ -1,6 +1,16 @@
 <template>
     <v-container class="container-materials">
-      <h2>Materiales</h2>
+      <h2>Gestión de Materiales</h2>
+      <div class="addMaterials">
+        <v-btn color="success" @click="showModal = true" size="x-large" variant="outlined">
+          <v-icon>mdi-link-plus</v-icon> Add Material
+        </v-btn>
+      </div>
+      <AddMaterialForm
+      :showModal="showModal"
+      @close="showModal = false"
+      @save="handleSaveMaterial"
+     />
         <v-row class="gap-5">
             <v-col
               v-for="material in materials"
@@ -45,11 +55,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import AddMaterialForm from '@/components/AddMaterialForm.vue'
 
 const materials = ref([])
 const loadingDelete = ref({})
 const loadingUpdate = ref({})
 const loadingView = ref({})
+
+const showModal = ref(false)
 
 async function fetchMaterials() {
     try {
@@ -90,10 +103,36 @@ async function editarMaterial(id) {
     loadingUpdate.value = { ...loadingUpdate.value, [id]: false }
   }, 1000)
 }
+
+async function handleSaveMaterial(newMaterial) {
+  try {
+      const response = await fetch('http://localhost:3000/materiales/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newMaterial)
+    })
+    if (!response.ok) throw new Error('Error al guardar el material')
+    const savedMaterial = await response.json()
+    await fetchMaterials()
+  } catch (error) {
+    
+  } finally {
+    showModal.value = false
+  }
+}
 </script>
 
 <style scoped>
  .container-materials{
     width: 90%;
+ }
+ .container-materials h2{
+    font-size: 3rem;
+    margin-bottom: 15px;
+ }
+ .container-materials .addMaterials{
+    margin-bottom: 35px!important;
  }
 </style>
