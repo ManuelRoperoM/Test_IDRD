@@ -56,7 +56,7 @@ export class ProyectosService {
     try {
       const proyecto = await this.proyectoRepository.findOne({
         where: { id },
-        relations: ['materiales'],
+        relations: ['materiales', 'ciudad', 'ciudad.departamento'],
       });
       if (!proyecto) {
         return {
@@ -79,7 +79,7 @@ export class ProyectosService {
   async getAllProyect(): Promise<ALlProyectsDto> {
     try {
       const proyects = await this.proyectoRepository.find({
-        relations: ['materiales', 'ciudad'],
+        relations: ['materiales', 'ciudad', 'ciudad.departamento'],
       });
       return {
         status: 200,
