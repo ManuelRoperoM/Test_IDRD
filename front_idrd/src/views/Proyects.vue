@@ -90,7 +90,6 @@ async function fetchProyects() {
         if(!response.ok) throw new Error('Error al obtener los materiales')
         const { data } = await response.json()
         proyects.value = Array.isArray(data) ? data : []
-        console.log("Los proyectos son", proyects);
     } catch (error) {
         console.error(error.message)
     }
@@ -99,12 +98,8 @@ onMounted(fetchProyects)
 
 async function editarProyect(proyect) {
     proyectToEdit.value = proyect
-    console.log("Proyect to edit: ", proyect);
-    
     loadingUpdate.value = { ...loadingUpdate.value, [proyect.id]: true }
     showUpdateModal.value = true
-    console.log(proyect,showUpdateModal.value );
-    
 }
 
 async function verDetalle(proyect) {
@@ -138,7 +133,6 @@ async function handleAssingMaterials(materials) {
 
 async function handleSaveProyect(proyect) {
   try {
-    console.log(proyect);
     const response = await fetch(BACKEND_ENDPOINT+'proyectos/create', {
     method: 'POST',
     headers: {
@@ -148,8 +142,6 @@ async function handleSaveProyect(proyect) {
   })
   if (!response.ok) throw new Error('Error al guardar el material')
   const { data } = await response.json()
-  console.log('Respuesta: ',data);
-  console.log('Materials: ', selectedMaterials);
   
   
   await assignMaterialsToProject(data.id, selectedMaterials)
@@ -162,9 +154,7 @@ async function handleSaveProyect(proyect) {
 }
 
 async function assignMaterialsToProject(proyectId, materials) {
-  try {
-    console.log("Materiales a asignar: ", materials.value);
-    
+  try {   
     const response = await fetch(BACKEND_ENDPOINT+`proyectos/${proyectId}/materiales`, {
       method: 'POST',
       headers: {
@@ -176,9 +166,6 @@ async function assignMaterialsToProject(proyectId, materials) {
     if (!response.ok) {
       throw new Error('Error al asociar los materiales al proyecto')
     }
-
-    console.log('Materiales asociados al proyecto')
-
   } catch (error) {
     console.error('Error en handleAssignMaterials:', error)
   }
@@ -192,7 +179,6 @@ function closeUpdateModal(material) {
 
 async function handleUpdateProyect(proyect) {
     try {
-        console.log(proyect);
         const response = await fetch(BACKEND_ENDPOINT+`proyectos/${proyect.id}`, {
             method: 'PUT',
             headers: {

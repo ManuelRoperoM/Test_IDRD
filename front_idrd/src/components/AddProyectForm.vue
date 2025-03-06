@@ -88,7 +88,6 @@
   }
 
   function handleCheckboxChange(materialId) {
-  console.log('Cambio en materiales seleccionados:', materialId)
   const index = selectedMaterials.value.indexOf(materialId)
   if (index === -1) {
     selectedMaterials.value.push(materialId)
@@ -101,10 +100,8 @@
   try {
     const response = await fetch(BACKEND_ENDPOINT+'proyectos/departamentos')
     const { data } = await response.json()
-    console.log(data);
     if (data) {
       departamentos.value = data
-      console.log('Departamentos:', departamentos.value)
     }
   } catch (error) {
     console.error('Error al cargar los departamentos:', error)
@@ -115,7 +112,6 @@
     try {
         const response = await fetch(BACKEND_ENDPOINT + 'materiales')
         const { data } = await response.json()
-        console.log('Materiales recibidos:', data)
         if (data) materiales.value = data
 
     } catch (error) {
@@ -125,12 +121,10 @@
 
 
   function updateCiudades(departamentoId) {
-    console.log(departamentoId);
     const departamento = departamentos.value.find(
     (dep) => dep.id === departamentoId
     )
     ciudades.value = departamento ? departamento.ciudad : []
-    console.log(ciudades.value);
     
   }
   
@@ -140,8 +134,6 @@
   
   
   function guardarProyect() {
-    console.log("SelectedMaterials: ",selectedMaterials.value);
-    
     if (newProyect.value.nombre) {
       emits('save', newProyect.value)
       emits('materials', selectedMaterials.value)
@@ -163,21 +155,11 @@
     }
   })
 
-  watch(selectedMaterials, (newVal) => {
-  console.log('Materiales seleccionados:', newVal)
-})
-
-watch(materiales, (newVal) => {
-  console.log('Materiales cargados:', newVal)
-})
-
   watch(selectedDepartamento, (newVal) => {
-    console.log('Watch detecta cambio en departamento:', newVal)
     updateCiudades(newVal)
   })
   
   function submitForm() {
-      console.log('Formulario enviado')
       guardarProyect()
   }
   </script>
