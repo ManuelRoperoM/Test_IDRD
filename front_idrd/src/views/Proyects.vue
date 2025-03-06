@@ -13,9 +13,9 @@
      />
      <UpdateProyectForm 
      :showModal="showUpdateModal"
-     :material="materialToEdit"
-     @close="closeUpdateModal(materialToEdit)"
-     @update="handleUpdateMaterial"
+     :proyect="proyectToEdit"
+     @close="closeUpdateModal(proyectToEdit)"
+     @update="handleUpdateProyect"
      />
         <v-row class="gap-5">
             <v-col
@@ -42,13 +42,13 @@
                 total: $ {{ calcularCostoTotal(proyect.materiales) }}
               </v-card-text>
               <v-card-actions class="mx-auto">
-                <v-btn :loading="loadingView[proyect.id] || false" color="primary" @click="verDetalle(material.id)" icon>
+                <v-btn :loading="loadingView[proyect.id] || false" color="primary" @click="verDetalle(proyect.id)" icon>
                     <v-icon>mdi-file-eye-outline</v-icon>
                 </v-btn>
-                <v-btn :loading="loadingUpdate[proyect.id] || false" color="warning" @click="editarMaterial(material)" icon>
+                <v-btn :loading="loadingUpdate[proyect.id] || false" color="warning" @click="editarProyect(proyect)" icon>
                     <v-icon>mdi-tag-edit-outline</v-icon>
                 </v-btn>
-                <v-btn :loading="loadingDelete[proyect.id] || false" color="error" @click="eliminarMaterial(material.id)" icon>
+                <v-btn :loading="loadingDelete[proyect.id] || false" color="error" @click="eliminarMaterial(proyect.id)" icon>
                     <v-icon>mdi-delete-empty-outline</v-icon>
                 </v-btn>
               </v-card-actions>
@@ -70,7 +70,7 @@ const loadingView = ref({})
 
 const showModal = ref(false)
 const showUpdateModal = ref(false)
-const materialToEdit = ref(null)
+const proyectToEdit = ref(null)
 
 const BACKEND_ENDPOINT = 'http://localhost:3000/'
 
@@ -80,18 +80,20 @@ async function fetchProyects() {
         if(!response.ok) throw new Error('Error al obtener los materiales')
         const { data } = await response.json()
         proyects.value = Array.isArray(data) ? data : []
-        console.log("Los materiales son", proyects);
+        console.log("Los proyectos son", proyects);
     } catch (error) {
         console.error(error.message)
     }
 }
 onMounted(fetchProyects)
 
-async function editarMaterial(material) {
-    materialToEdit.value = material
-    loadingUpdate.value = { ...loadingUpdate.value, [material.id]: true }
+async function editarProyect(proyect) {
+    proyectToEdit.value = proyect
+    console.log("Proyect to edit: ", proyect);
+    
+    loadingUpdate.value = { ...loadingUpdate.value, [proyect.id]: true }
     showUpdateModal.value = true
-    console.log(material,showUpdateModal.value );
+    console.log(proyect,showUpdateModal.value );
     
 }
 
@@ -146,16 +148,15 @@ function closeUpdateModal(material) {
     loadingUpdate.value = { ...loadingUpdate.value, [material.id]: false }
 }
 
-async function handleUpdateMaterial(material) {
+async function handleUpdateProyect(proyect) {
     try {
-        console.log(material);
-
-        const response = await fetch(BACKEND_ENDPOINT+`materiales/${material.id}`, {
+        console.log(proyect);
+        const response = await fetch(BACKEND_ENDPOINT+`proyectos/${proyect.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(material)
+            body: JSON.stringify(proyect)
         })
         
         if (!response.ok) throw new Error('Error al guardar el material')
@@ -165,7 +166,7 @@ async function handleUpdateMaterial(material) {
         console.error(error.message)
     } finally {
         showUpdateModal.value = false
-        loadingUpdate.value = { ...loadingUpdate.value, [material.id]: false }
+        loadingUpdate.value = { ...loadingUpdate.value, [proyect.id]: false }
     }
 }
 
