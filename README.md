@@ -15,6 +15,11 @@ TEST_IDRD
 
 ---
 
+## Demo
+A continuación puedes ver una demostración del proyecto en funcionamiento:
+
+![Demo del Proyecto](front_idrd/src/assets/demo.gif)
+
 ## Instalación del Backend
 
 1. Clona el repositorio y navega a la carpeta del backend:
@@ -89,12 +94,4 @@ npm install
 ```bash
 npm run dev
 ```
-
----
-
-## Demo
-A continuación puedes ver una demostración del proyecto en funcionamiento:
-
-![Demo del Proyecto](front_idrd/src/assets/demo.gif)
-
 ---
