@@ -95,6 +95,6 @@ npm run dev
 ## Demo
 A continuación puedes ver una demostración del proyecto en funcionamiento:
 
-![Demo del Proyecto](src/assets/demo.gif)
+![Demo del Proyecto](front_idrd/src/assets/demo.gif)
 
 ---
