@@ -48,7 +48,7 @@
                 <v-btn :loading="loadingUpdate[proyect.id] || false" color="warning" @click="editarProyect(proyect)" icon>
                     <v-icon>mdi-tag-edit-outline</v-icon>
                 </v-btn>
-                <v-btn :loading="loadingDelete[proyect.id] || false" color="error" @click="eliminarMaterial(proyect.id)" icon>
+                <v-btn :loading="loadingDelete[proyect.id] || false" color="error" @click="eliminarProyect(proyect.id)" icon>
                     <v-icon>mdi-delete-empty-outline</v-icon>
                 </v-btn>
               </v-card-actions>
@@ -105,15 +105,15 @@ async function verDetalle(id) {
   }, 1000)
 }
 
-async function eliminarMaterial(id) {
-    const confirmar = window.confirm('¿Estás seguro de que deseas eliminar este material?')
+async function eliminarProyect(id) {
+    const confirmar = window.confirm('¿Estás seguro de que deseas eliminar este proyecto?')
     if (!confirmar) return
     loadingDelete.value = { ...loadingDelete.value, [id]: true }
     try {
-        const response = await fetch(BACKEND_ENDPOINT+`materiales/${id}`, {
+        const response = await fetch(BACKEND_ENDPOINT+`proyectos/${id}`, {
             method: 'DELETE',
         })
-        if (!response.ok) throw new Error('Error al eliminar el material')
+        if (!response.ok) throw new Error('Error al eliminar el el proyecto')
         await fetchProyects()
     } catch (error) {
         console.error('Error al eliminar el material:', error.message)
