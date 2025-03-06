@@ -42,10 +42,11 @@ export class ProyectosService {
         nombre: data.nombre,
         ciudad: ciudad,
       });
-      await this.proyectoRepository.save(newProyect);
+      const proyectoSave = await this.proyectoRepository.save(newProyect);
       return {
         status: 200,
         msge: `Proyecto ${newProyect.nombre} creado exitosamente`,
+        data: proyectoSave,
       };
     } catch (error) {
       return {

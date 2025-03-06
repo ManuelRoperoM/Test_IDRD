@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Proyectos } from 'src/proyectos/entities/poryectos.entities';
 
 export class ProyectCreteDto {
   @IsNumber()
@@ -8,4 +9,7 @@ export class ProyectCreteDto {
   @IsString()
   @IsNotEmpty()
   msge: string;
+
+  @IsOptional()
+  data?: Proyectos;
 }

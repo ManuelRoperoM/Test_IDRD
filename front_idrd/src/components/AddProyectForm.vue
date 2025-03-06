@@ -26,8 +26,20 @@
                 label="Ciudad"
                 required
               ></v-select>
+              <h3>Seleccionar Materiales:</h3>
+              <!-- <v-checkbox-group v-model="selectedMaterials" row> -->
+                <v-checkbox
+                  v-for="material in materiales"
+                    :key="material.id"
+                    :label="material.description"
+                    :value="material.id"
+                    :model-value="selectedMaterials"
+                    @change="handleCheckboxChange(material.id)"
+                ></v-checkbox>
+                <!-- </v-checkbox-group> -->
             </v-form>
         </v-card-text>
+        <p>Materiales seleccionados: {{ selectedMaterials }}</p>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red" @click="cancelar">Cancelar</v-btn>
@@ -44,7 +56,7 @@
       showModal: Boolean,
   })
   
-  const emits = defineEmits(['close', 'save'])
+  const emits = defineEmits(['close', 'save', 'materials'])
   
   const newProyect = ref({
     nombre: '',
@@ -57,6 +69,9 @@
 
 
   const selectedDepartamento = ref(null)
+
+  const materiales = ref([])
+  const selectedMaterials = ref([])
 
   function itemProps (departamento) {
     return {
@@ -72,6 +87,16 @@
     }
   }
 
+  function handleCheckboxChange(materialId) {
+  console.log('Cambio en materiales seleccionados:', materialId)
+  const index = selectedMaterials.value.indexOf(materialId)
+  if (index === -1) {
+    selectedMaterials.value.push(materialId)
+  } else {
+    selectedMaterials.value.splice(index, 1)
+  }
+}
+
   async function fetchDepartamentos() {
   try {
     const response = await fetch(BACKEND_ENDPOINT+'proyectos/departamentos')
@@ -85,6 +110,19 @@
     console.error('Error al cargar los departamentos:', error)
   }
   }
+
+  async function fetchMateriales() {
+    try {
+        const response = await fetch(BACKEND_ENDPOINT + 'materiales')
+        const { data } = await response.json()
+        console.log('Materiales recibidos:', data)
+        if (data) materiales.value = data
+
+    } catch (error) {
+        console.error('Error al cargar los materiales:', error)
+    }
+}
+
 
   function updateCiudades(departamentoId) {
     console.log(departamentoId);
@@ -102,8 +140,11 @@
   
   
   function guardarProyect() {
+    console.log("SelectedMaterials: ",selectedMaterials.value);
+    
     if (newProyect.value.nombre) {
       emits('save', newProyect.value)
+      emits('materials', selectedMaterials.value)
       cancelar() // Cerrar el modal
     } else {
       alert('Por favor llena todos los campos.')
@@ -115,10 +156,20 @@
         newProyect.value = { nombre: '', ciudadId: '' }
         selectedDepartamento.value = null
         ciudades.value = []
+        selectedMaterials.value = []
     } else {
       fetchDepartamentos()
+      fetchMateriales()
     }
   })
+
+  watch(selectedMaterials, (newVal) => {
+  console.log('Materiales seleccionados:', newVal)
+})
+
+watch(materiales, (newVal) => {
+  console.log('Materiales cargados:', newVal)
+})
 
   watch(selectedDepartamento, (newVal) => {
     console.log('Watch detecta cambio en departamento:', newVal)

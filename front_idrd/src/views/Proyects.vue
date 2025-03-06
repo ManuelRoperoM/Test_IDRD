@@ -9,6 +9,7 @@
       <AddProyectForm
       :showModal="showModal"
       @close="showModal = false"
+      @materials="handleAssingMaterials"
       @save="handleSaveProyect"
      />
      <UpdateProyectForm 
@@ -79,6 +80,7 @@ const showUpdateModal = ref(false)
 const proyectToEdit = ref(null)
 const proyectDetail = ref(null)
 const showDetailModal = ref(false)
+const selectedMaterials = ref([])
 
 const BACKEND_ENDPOINT = 'http://localhost:3000/'
 
@@ -128,6 +130,12 @@ async function eliminarProyect(id) {
     }
 }
 
+
+async function handleAssingMaterials(materials) {
+  selectedMaterials.value = materials
+}
+
+
 async function handleSaveProyect(proyect) {
   try {
     console.log(proyect);
@@ -139,12 +147,40 @@ async function handleSaveProyect(proyect) {
     body: JSON.stringify(proyect)
   })
   if (!response.ok) throw new Error('Error al guardar el material')
-  const savedProyect = await response.json()
+  const { data } = await response.json()
+  console.log('Respuesta: ',data);
+  console.log('Materials: ', selectedMaterials);
+  
+  
+  await assignMaterialsToProject(data.id, selectedMaterials)
     await fetchProyects()
   } catch (error) {
     console.error(error.message)
   } finally {
     showModal.value = false
+  }
+}
+
+async function assignMaterialsToProject(proyectId, materials) {
+  try {
+    console.log("Materiales a asignar: ", materials.value);
+    
+    const response = await fetch(BACKEND_ENDPOINT+`proyectos/${proyectId}/materiales`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ materialsIds: materials.value }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Error al asociar los materiales al proyecto')
+    }
+
+    console.log('Materiales asociados al proyecto')
+
+  } catch (error) {
+    console.error('Error en handleAssignMaterials:', error)
   }
 }
 
