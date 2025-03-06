@@ -17,6 +17,11 @@
      @close="closeUpdateModal(proyectToEdit)"
      @update="handleUpdateProyect"
      />
+     <DetailProyect 
+     :showModal="showDetailModal"
+     :proyect="proyectDetail"
+     @close="showDetailModal = false"
+     />
         <v-row class="gap-5">
             <v-col
               v-for="proyect in proyects"
@@ -42,7 +47,7 @@
                 total: $ {{ calcularCostoTotal(proyect.materiales) }}
               </v-card-text>
               <v-card-actions class="mx-auto">
-                <v-btn :loading="loadingView[proyect.id] || false" color="primary" @click="verDetalle(proyect.id)" icon>
+                <v-btn :loading="loadingView[proyect.id] || false" color="primary" @click="verDetalle(proyect)" icon>
                     <v-icon>mdi-file-eye-outline</v-icon>
                 </v-btn>
                 <v-btn :loading="loadingUpdate[proyect.id] || false" color="warning" @click="editarProyect(proyect)" icon>
@@ -63,6 +68,7 @@
 import { ref, onMounted } from 'vue'
 import AddProyectForm from '@/components/AddProyectForm.vue'
 import UpdateProyectForm from '@/components/UpdateProyectForm.vue'
+import DetailProyect from '@/components/DetailProyect.vue'
 const proyects = ref([])
 const loadingDelete = ref({})
 const loadingUpdate = ref({})
@@ -71,6 +77,8 @@ const loadingView = ref({})
 const showModal = ref(false)
 const showUpdateModal = ref(false)
 const proyectToEdit = ref(null)
+const proyectDetail = ref(null)
+const showDetailModal = ref(false)
 
 const BACKEND_ENDPOINT = 'http://localhost:3000/'
 
@@ -97,12 +105,10 @@ async function editarProyect(proyect) {
     
 }
 
-async function verDetalle(id) {
-    loadingView.value = { ...loadingView.value, [id]: true }
-  setTimeout(() => {
-    console.log('Material eliminado con ID:', id)
-    loadingView.value = { ...loadingView.value, [id]: false }
-  }, 1000)
+async function verDetalle(proyect) {
+    proyectDetail.value = proyect
+    showDetailModal.value = true
+
 }
 
 async function eliminarProyect(id) {
